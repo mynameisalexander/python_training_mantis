@@ -14,7 +14,7 @@ testdata = [
 
 @pytest.mark.parametrize("project", testdata, ids=[repr(x) for x in testdata])
 def test_delete_some_group(app, project):
-    app.session.login("administrator", "root")
+    app.session.login(app.config["webadmin"]["username"], app.config["webadmin"]["password"])
     if len(app.project.get_project_list()) == 0:
         app.project.create(project)
     old_projects = app.project.get_project_list()

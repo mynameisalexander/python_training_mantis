@@ -23,7 +23,8 @@ class ProjectHelper:
 
     def open_project_page(self):
         wd = self.app.wd
-        wd.get("http://localhost:8080/mantisbt-1.2.19/manage_proj_page.php")
+        url = self.app.config["web"]["baseUrl"]
+        wd.get(url+"/manage_proj_page.php")
 
     def change_field_value(self, field_name, text):
         wd = self.app.wd
@@ -35,13 +36,16 @@ class ProjectHelper:
     def delete_project_by_id(self, project):
         wd = self.app.wd
         self.open_project_page()
-        wd.get('http://localhost:8080/mantisbt-1.2.19/manage_proj_edit_page.php?project_id='+str(project[0]))
+        url = self.app.config["web"]["baseUrl"]
+        wd.get(url+'/manage_proj_edit_page.php?project_id='+str(project[0]))
         # submit deletion
         wd.find_element_by_xpath("//div[4]/form/input[3]").click()
         wd.find_element_by_css_selector("input.button").click()
 
     def get_project_list(self):
-        connection = mysql.connector.connect(host="127.0.0.1", database="bugtracker", user="root", password="")
+        db_connection = self.app.config['dbconnection']
+        connection = mysql.connector.connect(
+            host=db_connection["host"], database=db_connection["database"], user=db_connection["user"], password=db_connection["password"])
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM `mantis_project_table`;")
         projects = []
