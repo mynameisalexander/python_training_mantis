@@ -1,4 +1,5 @@
 from model.project import Project
+from fixture.soap import *
 import mysql.connector
 
 
@@ -53,3 +54,8 @@ class ProjectHelper:
             projects.append(row)
         connection.close()
         return projects
+
+    def get_project_list_via_soap(self, username, password):
+        url = self.app.config["web"]["baseUrl"]
+        client = Client(url+"/api/soap/mantisconnect.php?wsdl")
+        return client.service.mc_projects_get_user_accessible(username, password)

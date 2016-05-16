@@ -14,11 +14,12 @@ testdata = [
 
 @pytest.mark.parametrize("project", testdata, ids=[repr(x) for x in testdata])
 def test_delete_some_group(app, project):
-    app.session.login(app.config["webadmin"]["username"], app.config["webadmin"]["password"])
-    if len(app.project.get_project_list()) == 0:
+    (username, password) = app.config["webadmin"]["username"], app.config["webadmin"]["password"]
+    app.session.login(username, password)
+    if len(app.project.get_project_list_via_soap(username, password)) == 0:
         app.project.create(project)
-    old_projects = app.project.get_project_list()
+    old_projects = app.project.get_project_list_via_soap(username, password)
     project = choice(old_projects)
     app.project.delete_project_by_id(project)
-    new_projects = app.project.get_project_list()
+    new_projects = app.project.get_project_list_via_soap(username, password)
     assert len(old_projects) - 1 == len(new_projects)
